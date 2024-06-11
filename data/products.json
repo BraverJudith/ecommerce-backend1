@@ -1,0 +1,12 @@
+[
+    {
+        "title": "Nachito",
+        "description": "100% cashmilon",
+        "code": "ABC123",
+        "price": 100,
+        "status": true,
+        "stock": 50,
+        "category": "Categoría",
+        "thumbnails": ["ruta1.jpg", "ruta2.jpg"]
+    }
+]

@@ -1,22 +1,31 @@
-const express = require('express');
+import express from "express";
+import fs from "fs";
+import path from "path";
+
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
+const __dirname = path.resolve();
+const productsFilePath = path.join(__dirname, "src", "data", "products.json");
 
-const productsFilePath = path.join(__dirname, '../data/products.json');
+console.log("Products file path:", productsFilePath);
 
-// Leer productos desde el archivo
 const readProducts = () => {
-  const data = fs.readFileSync(productsFilePath);
-  return JSON.parse(data);
+  try {
+    const data = fs.readFileSync(productsFilePath, "utf-8");
+    return JSON.parse(data);
+  } catch (err) {
+    console.error(`Error reading products file: ${err}`);
+    return [];
+  }
 };
 
-// Escribir productos al archivo
 const writeProducts = (products) => {
-  fs.writeFileSync(productsFilePath, JSON.stringify(products, null, 2));
+  try {
+    fs.writeFileSync(productsFilePath, JSON.stringify(products, null, 2));
+  } catch (err) {
+    console.error(`Error writing products file: ${err}`);
+  }
 };
 
-// Ruta raíz GET /
 router.get('/', (req, res) => {
   const { limit } = req.query;
   const products = readProducts();
@@ -26,7 +35,6 @@ router.get('/', (req, res) => {
   res.json(products);
 });
 
-// Ruta GET /:pid
 router.get('/:pid', (req, res) => {
   const { pid } = req.params;
   const products = readProducts();
@@ -37,7 +45,6 @@ router.get('/:pid', (req, res) => {
   res.json(product);
 });
 
-// Ruta raíz POST /
 router.post('/', (req, res) => {
   const { title, description, code, price, status = true, stock, category, thumbnails = [] } = req.body;
 
@@ -55,7 +62,6 @@ router.post('/', (req, res) => {
   res.status(201).json(newProduct);
 });
 
-// Ruta PUT /:pid
 router.put('/:pid', (req, res) => {
   const { pid } = req.params;
   const { title, description, code, price, status, stock, category, thumbnails } = req.body;
@@ -73,7 +79,6 @@ router.put('/:pid', (req, res) => {
   res.json(updatedProduct);
 });
 
-// Ruta DELETE /:pid
 router.delete('/:pid', (req, res) => {
   const { pid } = req.params;
   const products = readProducts();
@@ -88,5 +93,4 @@ router.delete('/:pid', (req, res) => {
   res.status(204).send();
 });
 
-module.exports = router;
-
+export default router;
